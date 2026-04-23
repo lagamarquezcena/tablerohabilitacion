@@ -623,6 +623,130 @@
                 font-size: 1.2rem;
             }
         }
+
+        /* Tarjeta próximos a vencer */
+        .stat-card.proximos { --accent: #e67e22; }
+
+        /* Pill de porcentaje en tarjetas */
+        .stat-pct-pill {
+            display: inline-block;
+            margin-top: 0.4rem;
+            background: rgba(0,0,0,0.06);
+            color: var(--accent);
+            font-size: 1.05rem;
+            font-weight: 700;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            letter-spacing: 0.3px;
+        }
+
+        /* Tarjeta proximos full-width */
+        .proximos-row {
+            margin-bottom: 2rem;
+        }
+        .proximos-row .stat-card.proximos {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        .proximos-row .stat-card.proximos .proximos-main {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+        }
+
+        /* Leyenda mapa */
+        .map-legend {
+            display: flex;
+            gap: 1.25rem;
+            flex-wrap: wrap;
+            margin-top: 0.75rem;
+            align-items: center;
+        }
+        .map-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.3rem 0.7rem;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            transition: all 0.15s;
+            font-weight: 600;
+        }
+        .map-legend-item:hover { border-color: var(--border-light); }
+        .map-legend-item.active { border-color: var(--va-red); color: var(--text-primary); }
+        .map-legend-dot {
+            width: 14px; height: 14px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,0.8);
+            flex-shrink: 0;
+        }
+
+        /* Búsqueda en tabla */
+        .table-search-bar {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        .table-search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.6rem 1rem;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.88rem;
+        }
+        .table-search-input:focus { outline: none; border-color: var(--va-red); }
+
+        /* Botón exportar CSV */
+        .btn-export-csv {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #2a7a3b;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.1rem;
+            border-radius: 6px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .btn-export-csv:hover { background: #1f5c2c; }
+
+        /* Botones de paginación */
+        #pagination-buttons .page-btn {
+            min-width: 36px;
+            height: 36px;
+            padding: 0 0.5rem;
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            background: white;
+            color: var(--text-primary);
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        #pagination-buttons .page-btn:hover { background: var(--va-gray); border-color: var(--va-red); color: var(--va-red); }
+        #pagination-buttons .page-btn.active { background: var(--va-red); color: white; border-color: var(--va-red); }
+        #pagination-buttons .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        /* proximos-row */
+        .proximos-row { margin-bottom: 2rem; }
+        .proximos-row .stat-card.proximos { display: flex; flex-wrap: wrap; gap: 1rem; align-items: center; }
+        .proximos-main { display: flex; align-items: baseline; gap: 1rem; }
     </style>
 </head>
 <body>
@@ -657,14 +781,28 @@
                 <div class="filter-group">
                     <label class="filter-label">Estado</label>
                     <select id="filtroEstado" class="filter-select">
-                        <option value="">Todos</option>
+                        <option value="">Todos los estados</option>
                         <option value="VIGENTE">Vigente</option>
                         <option value="VENCIDO">Vencido</option>
+                        <option value="INSCRIPTOS SIN VENCIMIENTO">Inscriptos sin Vencimiento</option>
+                        <option value="INSCRIPTOS SIN HABILITACIÓN">Inscriptos sin Habilitación</option>
                     </select>
                 </div>
                 <div class="filter-group">
-                    <label class="filter-label">Buscar por Legajo</label>
-                    <input type="text" id="filtroLegajo" class="filter-input" placeholder="Ej: 12345">
+                    <label class="filter-label">Barrio</label>
+                    <select id="filtroBarrio" class="filter-select">
+                        <option value="">Todos los barrios</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Categoría</label>
+                    <select id="filtroCategoria" class="filter-select">
+                        <option value="">Todas las categorías</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label class="filter-label">Buscar por Nombre / Legajo</label>
+                    <input type="text" id="filtroLegajo" class="filter-input" placeholder="Nombre, legajo o razón social...">
                 </div>
                 <div class="filter-actions">
                     <button class="filter-button" onclick="aplicarFiltros()">Aplicar Filtros</button>
@@ -673,7 +811,7 @@
             </div>
         </div>
 
-        <!-- Stats Grid -->
+        <!-- Stats Grid: estados -->
         <div class="stats-grid">
             <div class="stat-card vigente">
                 <div class="stat-header">
@@ -681,6 +819,7 @@
                     <div class="stat-badge">Activas</div>
                 </div>
                 <div class="stat-value" id="stat-vigentes">0</div>
+                <div class="stat-pct-pill" id="stat-vigentes-pct">–</div>
                 <div class="stat-footer">Comercios en regla</div>
             </div>
 
@@ -690,9 +829,44 @@
                     <div class="stat-badge">Atención</div>
                 </div>
                 <div class="stat-value" id="stat-vencidos">0</div>
-                <div class="stat-footer">Requieren renovación</div>
-                <div class="stat-detail">
-                    Promedio de vencimiento: <strong id="promedio-vencimiento">-</strong> días
+                <div class="stat-pct-pill" id="stat-vencidos-pct">–</div>
+                <div class="stat-footer">Prom. <strong id="promedio-vencimiento">-</strong> días vencido</div>
+            </div>
+
+            <div class="stat-card sin-vencimiento">
+                <div class="stat-header">
+                    <div class="stat-label">Inscriptos sin Vencimiento</div>
+                    <div class="stat-badge" style="background:var(--accent);">Sin Venc.</div>
+                </div>
+                <div class="stat-value" id="stat-sin-vencimiento">0</div>
+                <div class="stat-pct-pill" id="stat-sin-vencimiento-pct">–</div>
+                <div class="stat-footer">del total registrado</div>
+            </div>
+
+            <div class="stat-card sin-habilitacion">
+                <div class="stat-header">
+                    <div class="stat-label">Inscriptos sin Habilitación</div>
+                    <div class="stat-badge" style="background:var(--accent);">Sin Hab.</div>
+                </div>
+                <div class="stat-value" id="stat-sin-habilitacion">0</div>
+                <div class="stat-pct-pill" id="stat-sin-habilitacion-pct">–</div>
+                <div class="stat-footer">del total registrado</div>
+            </div>
+        </div>
+
+        <!-- Tarjeta Vencen en 30 días (debajo de estados, full width) -->
+        <div class="proximos-row">
+            <div class="stat-card proximos" style="margin-bottom:0;">
+                <div style="flex:1;min-width:0;">
+                    <div class="stat-header">
+                        <div class="stat-label">⚠ Vencen en los próximos 30 días</div>
+                        <div class="stat-badge" style="background:var(--accent);">Acción urgente</div>
+                    </div>
+                    <div class="proximos-main">
+                        <div class="stat-value" id="stat-proximos30" style="font-size:3rem;">0</div>
+                        <div class="stat-pct-pill" id="stat-proximos30-pct" style="font-size:1rem;">–</div>
+                    </div>
+                    <div class="stat-footer">comercios vigentes con habilitación próxima a vencer</div>
                 </div>
             </div>
         </div>
@@ -709,7 +883,7 @@
 
             <!-- Timeline Vencimientos por Mes -->
             <div class="chart-card full">
-                <div class="chart-title">📅 Vencimientos por Mes 2025-2026 (Previsión de Renovaciones)</div>
+                <div class="chart-title">📅 Vencimientos por Mes 2026-2027 (Previsión de Renovaciones)</div>
                 <div class="chart-container timeline">
                     <canvas id="chartVencimientosMes"></canvas>
                 </div>
@@ -729,6 +903,26 @@
         <!-- Map -->
         <div class="chart-card full">
             <div class="chart-title">🗺️ Mapa de Ubicaciones</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.75rem;flex-wrap:wrap;gap:0.5rem;">
+                <div class="map-legend">
+                    <span style="font-size:0.82rem;color:var(--text-secondary);font-weight:600;">Filtrar:</span>
+                    <div class="map-legend-item active" id="legend-todos" onclick="filtrarMapa('todos')">
+                        <span class="map-legend-dot" style="background:#888;"></span> Todos
+                    </div>
+                    <div class="map-legend-item" id="legend-vigente" onclick="filtrarMapa('VIGENTE')">
+                        <span class="map-legend-dot" style="background:#5eb846;"></span> Vigentes
+                    </div>
+                    <div class="map-legend-item" id="legend-vencido" onclick="filtrarMapa('VENCIDO')">
+                        <span class="map-legend-dot" style="background:#e63946;"></span> Vencidos
+                    </div>
+                    <div class="map-legend-item" id="legend-sin-hab" onclick="filtrarMapa('INSCRIPTOS SIN HABILITACIÓN')">
+                        <span class="map-legend-dot" style="background:#666;"></span> Sin Habilitación
+                    </div>
+                    <div class="map-legend-item" id="legend-sin-venc" onclick="filtrarMapa('INSCRIPTOS SIN VENCIMIENTO')">
+                        <span class="map-legend-dot" style="background:#FF6600;"></span> Sin Vencimiento
+                    </div>
+                </div>
+            </div>
             <div id="map"></div>
             <div class="map-info">
                 Mostrando <strong id="map-count">0</strong> ubicaciones en el mapa
@@ -740,6 +934,14 @@
             <div class="table-header">
                 <div class="table-title">📋 Próximos a Vencer</div>
                 <div class="table-count" id="table-count">Seleccioná un filtro</div>
+            </div>
+            <div class="table-search-bar">
+                <input type="text" class="table-search-input" id="busquedaTabla"
+                    placeholder="🔍  Buscar por nombre, actividad o categoría..."
+                    oninput="buscarEnTabla()">
+                <button class="btn-export-csv" onclick="exportarCSV()">
+                    ⬇ Exportar CSV
+                </button>
             </div>
             <div class="venc-filter-buttons">
                 <button class="venc-btn btn-vencido" onclick="filtrarVencimientos('vencido')">🔴 Vencidos</button>
@@ -754,6 +956,7 @@
                         <tr>
                             <th>Legajo</th>
                             <th>Nombre</th>
+                            <th>Categoría</th>
                             <th>Actividad</th>
                             <th>Dirección</th>
                             <th>Barrio</th>
@@ -763,9 +966,21 @@
                         </tr>
                     </thead>
                     <tbody id="tbody-vencimientos">
-                        <tr><td colspan="8" style="text-align:center; padding: 2rem;">Cargue un archivo JSON para ver los datos</td></tr>
+                        <tr><td colspan="9" style="text-align:center; padding: 2rem;">Cargue un archivo JSON para ver los datos</td></tr>
                     </tbody>
                 </table>
+            </div>
+            <!-- Paginación -->
+            <div id="pagination-controls" style="display:none; margin-top:1.25rem; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.75rem;">
+                <div style="display:flex;align-items:center;gap:0.75rem;">
+                    <span style="font-size:0.85rem;color:var(--text-secondary);" id="pagination-info"></span>
+                    <select id="page-size-select" onchange="cambiarPageSize()" style="padding:0.35rem 0.5rem;border:1px solid var(--border-light);border-radius:6px;font-family:'Montserrat',sans-serif;font-size:0.8rem;">
+                        <option value="20">20 / pág.</option>
+                        <option value="50">50 / pág.</option>
+                        <option value="100">100 / pág.</option>
+                    </select>
+                </div>
+                <div id="pagination-buttons" style="display:flex;gap:0.35rem;flex-wrap:wrap;align-items:center;"></div>
             </div>
         </div>
     </div>
@@ -778,6 +993,8 @@
         let chartCategoria = null;
         let chartHabilitacionesMes = null;
         let chartVencimientosMes = null;
+        let filtroMapaActivo = 'todos';
+        let busquedaTablaActiva = '';
 
         document.getElementById('fileInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
@@ -793,6 +1010,7 @@
                     datosCompletos = raw.ubicaciones ? raw : { ubicaciones: raw };
                     datosFiltrados = JSON.parse(JSON.stringify(datosCompletos));
                     
+                    poblarFiltrosSelectivos();
                     actualizarStats();
                     actualizarGraficos();
                     inicializarMapa();
@@ -804,14 +1022,50 @@
             reader.readAsText(file);
         });
 
+        function poblarFiltrosSelectivos() {
+            const barrios = [...new Set(datosCompletos.ubicaciones.map(u => (u.barrio||'').trim()).filter(Boolean))].sort();
+            const cats    = [...new Set(datosCompletos.ubicaciones.map(u => (u.categoria_dist||'').trim()).filter(Boolean))].sort();
+
+            const selBarrio = document.getElementById('filtroBarrio');
+            selBarrio.innerHTML = '<option value="">Todos los barrios</option>';
+            barrios.forEach(b => { const o = document.createElement('option'); o.value = b; o.textContent = b; selBarrio.appendChild(o); });
+
+            const selCat = document.getElementById('filtroCategoria');
+            selCat.innerHTML = '<option value="">Todas las categorías</option>';
+            cats.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; selCat.appendChild(o); });
+        }
+
         function actualizarStats() {
-            const vigentes = datosFiltrados.ubicaciones.filter(u => u.estado === 'VIGENTE').length;
-            const vencidos = datosFiltrados.ubicaciones.filter(u => u.estado === 'VENCIDO').length;
+            const total = datosFiltrados.ubicaciones.length;
+            const vigentes  = datosFiltrados.ubicaciones.filter(u => u.estado === 'VIGENTE').length;
+            const vencidos  = datosFiltrados.ubicaciones.filter(u => u.estado === 'VENCIDO').length;
+            const sinVenc   = datosFiltrados.ubicaciones.filter(u => u.estado === 'INSCRIPTOS SIN VENCIMIENTO').length;
+            const sinHab    = datosFiltrados.ubicaciones.filter(u => u.estado === 'INSCRIPTOS SIN HABILITACIÓN').length;
+
+            // Próximos a vencer en 30 días (solo VIGENTES)
+            const hoy = new Date(); hoy.setHours(0,0,0,0);
+            const proximos30 = datosFiltrados.ubicaciones.filter(u => {
+                if (u.estado !== 'VIGENTE') return false;
+                const f = parseFecha(u.vencimiento);
+                if (!f) return false;
+                const d = Math.ceil((f - hoy) / 86400000);
+                return d >= 0 && d <= 30;
+            }).length;
 
             document.getElementById('stat-vigentes').textContent = vigentes.toLocaleString();
             document.getElementById('stat-vencidos').textContent = vencidos.toLocaleString();
+            document.getElementById('stat-sin-vencimiento').textContent = sinVenc.toLocaleString();
+            document.getElementById('stat-sin-habilitacion').textContent = sinHab.toLocaleString();
+            document.getElementById('stat-proximos30').textContent = proximos30.toLocaleString();
 
-            // Calcular promedio de vencimiento para los vencidos
+            const pct  = (n, d) => d > 0 ? (n / d * 100).toFixed(1) + '%' : '–';
+            const el = id => document.getElementById(id);
+            if (el('stat-vigentes-pct'))        el('stat-vigentes-pct').textContent        = pct(vigentes, total) + ' del total';
+            if (el('stat-vencidos-pct'))         el('stat-vencidos-pct').textContent         = pct(vencidos, total) + ' del total';
+            if (el('stat-sin-vencimiento-pct'))  el('stat-sin-vencimiento-pct').textContent  = pct(sinVenc, total) + ' del total';
+            if (el('stat-sin-habilitacion-pct')) el('stat-sin-habilitacion-pct').textContent = pct(sinHab, total) + ' del total';
+            if (el('stat-proximos30-pct'))       el('stat-proximos30-pct').textContent       = pct(proximos30, vigentes) + ' de vigentes';
+
             calcularPromedioVencimiento();
         }
 
@@ -858,6 +1112,7 @@
             actualizarGraficoHabilitacionesMes();
             actualizarGraficoVencimientosMes();
         }
+
 
         function actualizarGraficoCategoriasCompleto() {
             const categorias = {};
@@ -1082,11 +1337,11 @@
                 vencimientosPorMes[mesKey] = (vencimientosPorMes[mesKey] || 0) + 1;
             });
 
-            // Generar array de meses para el periodo 2025-2026
+            // Generar array de meses para el periodo 2026-2027
             const meses = [];
             const labels = [];
             
-            for (let year = 2025; year <= 2026; year++) {
+            for (let year = 2026; year <= 2027; year++) {
                 for (let mes = 1; mes <= 12; mes++) {
                     const mesKey = `${year}-${String(mes).padStart(2, '0')}`;
                     meses.push(vencimientosPorMes[mesKey] || 0);
@@ -1171,8 +1426,9 @@
                     attributionControl: true
                 });
 
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '&copy; OpenStreetMap contributors',
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                    subdomains: 'abcd',
                     maxZoom: 19,
                     minZoom: 10
                 }).addTo(map);
@@ -1190,65 +1446,63 @@
             }, 200);
         }
 
+        function colorEstado(estado) {
+            if (estado === 'VIGENTE') return '#5eb846';
+            if (estado === 'VENCIDO') return '#e63946';
+            if (estado === 'INSCRIPTOS SIN VENCIMIENTO') return '#FF6600';
+            if (estado === 'INSCRIPTOS SIN HABILITACIÓN') return '#666';
+            return '#888';
+        }
+
+        function filtrarMapa(estado) {
+            filtroMapaActivo = estado;
+            // Actualizar leyenda
+            document.querySelectorAll('.map-legend-item').forEach(el => el.classList.remove('active'));
+            const idMap = {
+                'todos': 'legend-todos', 'VIGENTE': 'legend-vigente',
+                'VENCIDO': 'legend-vencido',
+                'INSCRIPTOS SIN HABILITACIÓN': 'legend-sin-hab',
+                'INSCRIPTOS SIN VENCIMIENTO': 'legend-sin-venc'
+            };
+            const el = document.getElementById(idMap[estado]);
+            if (el) el.classList.add('active');
+            cargarMarcadores();
+        }
+
         function cargarMarcadores() {
             if (!map || !markersLayer) return;
-
             markersLayer.clearLayers();
 
-            datosFiltrados.ubicaciones.forEach(loc => {
+            const fuente = filtroMapaActivo === 'todos'
+                ? datosFiltrados.ubicaciones
+                : datosFiltrados.ubicaciones.filter(u => u.estado === filtroMapaActivo);
+
+            fuente.forEach(loc => {
                 if (!loc.lat || !loc.lon) return;
-
-                const color = loc.estado === 'VIGENTE' ? '#5eb846' : '#e63946';
-                
+                const color = colorEstado(loc.estado);
+                const badgeSafe = (loc.estado||'').replace(/[^a-z]/gi,'').toLowerCase();
                 const marker = L.circleMarker([loc.lat, loc.lon], {
-                    radius: 8,
-                    fillColor: color,
-                    color: '#fff',
-                    weight: 2,
-                    opacity: 1,
-                    fillOpacity: 0.8
+                    radius: 8, fillColor: color, color: '#fff',
+                    weight: 2, opacity: 1, fillOpacity: 0.85
                 });
 
-                const popupContent = `
+                marker.bindPopup(`
                     <div class="custom-popup">
-                        <div class="popup-title">${loc.nombre || loc.nom_fantasia || 'Sin nombre'}</div>
-                        <div class="popup-info">
-                            <span class="popup-label">Legajo:</span>
-                            <span class="popup-value">${loc.legajo || 'N/A'}</span>
-                        </div>
-                        <div class="popup-info">
-                            <span class="popup-label">Actividad:</span>
-                            <span class="popup-value">${loc.actividad || 'N/A'}</span>
-                        </div>
-                        <div class="popup-info">
-                            <span class="popup-label">Estado:</span>
-                            <span class="popup-value"><span class="badge ${loc.estado.toLowerCase()}">${loc.estado}</span></span>
-                        </div>
-                        <div class="popup-info">
-                            <span class="popup-label">Vencimiento:</span>
-                            <span class="popup-value"><strong>${loc.vencimiento || 'N/A'}</strong></span>
-                        </div>
-                        <div class="popup-info">
-                            <span class="popup-label">Dirección:</span>
-                            <span class="popup-value">${loc.direccion || 'N/A'}</span>
-                        </div>
-                        <div class="popup-info">
-                            <span class="popup-label">Barrio:</span>
-                            <span class="popup-value">${loc.barrio || loc.nom_barrio || 'N/A'}</span>
-                        </div>
-                    </div>
-                `;
-
-                marker.bindPopup(popupContent, {
-                    maxWidth: 300,
-                    className: 'custom-popup-wrapper'
-                });
+                        <div class="popup-title">${loc.nombre || 'Sin nombre'}</div>
+                        <div class="popup-info"><span class="popup-label">Legajo:</span><span class="popup-value">${loc.legajo || 'N/A'}</span></div>
+                        <div class="popup-info"><span class="popup-label">Categoría:</span><span class="popup-value">${loc.categoria_dist || 'N/A'}</span></div>
+                        <div class="popup-info"><span class="popup-label">Actividad:</span><span class="popup-value">${loc.actividad || 'N/A'}</span></div>
+                        <div class="popup-info"><span class="popup-label">Estado:</span><span class="popup-value"><span class="badge ${badgeSafe}">${loc.estado}</span></span></div>
+                        <div class="popup-info"><span class="popup-label">Vencimiento:</span><span class="popup-value"><strong>${loc.vencimiento || 'N/A'}</strong></span></div>
+                        <div class="popup-info"><span class="popup-label">Dirección:</span><span class="popup-value">${loc.direccion || 'N/A'}</span></div>
+                        <div class="popup-info"><span class="popup-label">Barrio:</span><span class="popup-value">${(loc.barrio||'').trim() || 'N/A'}</span></div>
+                    </div>`, { maxWidth: 310, className: 'custom-popup-wrapper' });
 
                 markersLayer.addLayer(marker);
             });
 
             map.addLayer(markersLayer);
-            document.getElementById('map-count').textContent = datosFiltrados.ubicaciones.length.toLocaleString();
+            document.getElementById('map-count').textContent = fuente.length.toLocaleString();
         }
 
         let filtroVencActivo = null;
@@ -1267,22 +1521,23 @@
         function calcularProximosVencer(filtro) {
             const hoy = new Date();
             hoy.setHours(0, 0, 0, 0);
-            const legajo = document.getElementById('filtroLegajo').value.trim();
             const lista = [];
 
-            datosCompletos.ubicaciones.forEach(u => {
-                // Aplicar filtro de legajo si está activo
-                if (legajo && (!u.legajo || !u.legajo.toString().includes(legajo))) return;
+            // Usa datosFiltrados para respetar los filtros globales (barrio, categoría, etc.)
+            const fuente = datosFiltrados.ubicaciones;
 
+            fuente.forEach(u => {
                 const fecha = parseFecha(u.vencimiento);
-                if (!fecha) return;
-                const dias = Math.ceil((fecha - hoy) / (1000 * 60 * 60 * 24));
+                // Para 'todos', incluir aunque no tenga vencimiento (estados sin venc/hab)
+                if (!fecha && filtro !== 'todos') return;
+
+                const dias = fecha ? Math.ceil((fecha - hoy) / (1000 * 60 * 60 * 24)) : null;
 
                 let incluir = false;
-                if      (filtro === 'vencido') incluir = dias < 0 && dias >= -60;
-                else if (filtro === 30)        incluir = dias >= 0 && dias <= 30;
-                else if (filtro === 60)        incluir = dias >= 31 && dias <= 60;
-                else if (filtro === 90)        incluir = dias >= 61 && dias <= 90;
+                if      (filtro === 'vencido') incluir = dias !== null && dias < 0 && dias >= -60;
+                else if (filtro === 30)        incluir = dias !== null && dias >= 0 && dias <= 30;
+                else if (filtro === 60)        incluir = dias !== null && dias >= 31 && dias <= 60;
+                else if (filtro === 90)        incluir = dias !== null && dias >= 61 && dias <= 90;
                 else if (filtro === 'todos')   incluir = true;
 
                 if (incluir) lista.push({ ...u, dias_restantes: dias });
@@ -1335,12 +1590,39 @@
             renderizarTablaVencimientos(filtro);
         }
 
+        // Pagination state
+        let paginaActual = 1;
+        let pageSize = 20;
+        let listaActual = [];
+
         function renderizarTablaVencimientos(filtro) {
+            const raw   = calcularProximosVencer(filtro);
+            listaActual = ordenarLista(raw);
+            paginaActual = 1;
+            renderizarPagina();
+        }
+
+        function buscarEnTabla() {
+            busquedaTablaActiva = document.getElementById('busquedaTabla').value.trim().toLowerCase();
+            paginaActual = 1;
+            renderizarPagina();
+        }
+
+        function renderizarPagina() {
             const tbody = document.getElementById('tbody-vencimientos');
             tbody.innerHTML = '';
 
-            const raw   = calcularProximosVencer(filtro);
-            const lista = ordenarLista(raw);
+            const filtro = filtroVencActivo;
+            // Aplicar búsqueda inline
+            const lista = busquedaTablaActiva
+                ? listaActual.filter(u =>
+                    (u.nombre||'').toLowerCase().includes(busquedaTablaActiva) ||
+                    (u.actividad||'').toLowerCase().includes(busquedaTablaActiva) ||
+                    (u.categoria_dist||'').toLowerCase().includes(busquedaTablaActiva) ||
+                    (u.barrio||'').toLowerCase().includes(busquedaTablaActiva) ||
+                    (u.legajo||'').toString().includes(busquedaTablaActiva)
+                  )
+                : listaActual;
 
             if (lista.length === 0) {
                 const labels = {
@@ -1350,12 +1632,21 @@
                     90: 'que vencen entre 61 y 90 días',
                     'todos': 'registros'
                 };
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 2rem; color: var(--text-secondary);">No hay comercios ${labels[filtro]}</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding: 2rem; color: var(--text-secondary);">No hay comercios ${labels[filtro] || ''}</td></tr>`;
                 document.getElementById('table-count').textContent = '0 registros';
+                const pc = document.getElementById('pagination-controls'); if(pc) pc.style.display = 'none';
                 return;
             }
 
-            lista.forEach(item => {
+            // Paginate
+            const totalPages = Math.ceil(lista.length / pageSize);
+            if (paginaActual > totalPages) paginaActual = totalPages;
+            if (paginaActual < 1) paginaActual = 1;
+            const start = (paginaActual - 1) * pageSize;
+            const end = Math.min(start + pageSize, lista.length);
+            const page = lista.slice(start, end);
+
+            page.forEach(item => {
                 let badgeClass = 'normal';
                 if      (item.dias_restantes < 0)   badgeClass = 'vencido';
                 else if (item.dias_restantes <= 10)  badgeClass = 'urgente';
@@ -1365,15 +1656,20 @@
                     ? `${Math.abs(item.dias_restantes)} días vencido`
                     : `${item.dias_restantes} días`;
 
+                // Fix direccion: use direccion field (already correct per-comercio from xlsx)
+                const direccion = item.direccion || 'N/A';
+
                 const row = document.createElement('tr');
+                const badgeSafe = (item.estado||'').replace(/[^a-z]/gi,'').toLowerCase();
                 row.innerHTML = `
                     <td><strong>${item.legajo || 'N/A'}</strong></td>
                     <td><strong>${item.nombre}</strong></td>
+                    <td>${item.categoria_dist || 'N/A'}</td>
                     <td>${item.actividad || 'N/A'}</td>
-                    <td>${item.direccion || 'N/A'}</td>
+                    <td>${direccion}</td>
                     <td>${(item.barrio || '').trim()}</td>
-                    <td><span class="badge ${item.estado.toLowerCase()}">${item.estado}</span></td>
-                    <td>${item.vencimiento}</td>
+                    <td><span class="badge ${badgeSafe}">${item.estado}</span></td>
+                    <td>${item.vencimiento || 'N/A'}</td>
                     <td><span class="badge ${badgeClass}">${diasLabel}</span></td>
                 `;
                 tbody.appendChild(row);
@@ -1386,7 +1682,44 @@
                 90: 'Vencen en 61–90 días',
                 'todos': 'Todos los registros'
             };
-            document.getElementById('table-count').textContent = `${lista.length} registros · ${countLabels[filtro]}`;
+            document.getElementById('table-count').textContent = `${lista.length} registros · ${countLabels[filtro] || ''}`;
+
+            // Pagination controls
+            const paginationEl = document.getElementById('pagination-controls');
+            if (paginationEl) paginationEl.style.display = lista.length > pageSize ? 'flex' : 'none';
+
+            document.getElementById('pagination-info').textContent =
+                `Mostrando ${start + 1}–${end} de ${lista.length}`;
+
+            // Build page buttons
+            const buttonsEl = document.getElementById('pagination-buttons');
+            buttonsEl.innerHTML = '';
+
+            const addBtn = (label, page, disabled, active) => {
+                const btn = document.createElement('button');
+                btn.className = 'page-btn' + (active ? ' active' : '');
+                btn.textContent = label;
+                btn.disabled = disabled;
+                btn.onclick = () => { paginaActual = page; renderizarPagina(); };
+                buttonsEl.appendChild(btn);
+            };
+
+            addBtn('«', 1, paginaActual === 1, false);
+            addBtn('‹', paginaActual - 1, paginaActual === 1, false);
+
+            // Window of pages
+            let pageStart = Math.max(1, paginaActual - 2);
+            let pageEnd = Math.min(totalPages, paginaActual + 2);
+            if (pageEnd - pageStart < 4) {
+                if (pageStart === 1) pageEnd = Math.min(totalPages, 5);
+                else pageStart = Math.max(1, pageEnd - 4);
+            }
+            for (let p = pageStart; p <= pageEnd; p++) {
+                addBtn(p, p, false, p === paginaActual);
+            }
+
+            addBtn('›', paginaActual + 1, paginaActual === totalPages, false);
+            addBtn('»', totalPages, paginaActual === totalPages, false);
         }
 
         function actualizarTablaVencimientos() {
@@ -1399,19 +1732,27 @@
                 return;
             }
 
-            const estado = document.getElementById('filtroEstado').value;
-            const legajo = document.getElementById('filtroLegajo').value.trim();
-            
+            const estado   = document.getElementById('filtroEstado').value;
+            const barrio   = document.getElementById('filtroBarrio').value;
+            const cat      = document.getElementById('filtroCategoria').value;
+            const legajo   = document.getElementById('filtroLegajo').value.trim().toLowerCase();
+
             datosFiltrados.ubicaciones = datosCompletos.ubicaciones.filter(u => {
-                if (estado && u.estado !== estado) return false;
-                if (legajo && (!u.legajo || !u.legajo.toString().includes(legajo))) return false;
+                if (estado  && u.estado !== estado) return false;
+                if (barrio  && (u.barrio||'').trim() !== barrio) return false;
+                if (cat     && (u.categoria_dist||'').trim() !== cat) return false;
+                if (legajo) {
+                    const matchLeg  = (u.legajo||'').toString().toLowerCase().includes(legajo);
+                    const matchNom  = (u.nombre||'').toLowerCase().includes(legajo);
+                    const matchRaz  = (u.razon_social||'').toLowerCase().includes(legajo);
+                    if (!matchLeg && !matchNom && !matchRaz) return false;
+                }
                 return true;
             });
 
             actualizarStats();
             actualizarGraficos();
             cargarMarcadores();
-            // Refrescar tabla de vencimientos con el filtro activo
             if (filtroVencActivo !== null) renderizarTablaVencimientos(filtroVencActivo);
         }
 
@@ -1419,14 +1760,63 @@
             if (!datosCompletos) return;
 
             document.getElementById('filtroEstado').value = '';
+            document.getElementById('filtroBarrio').value = '';
+            document.getElementById('filtroCategoria').value = '';
             document.getElementById('filtroLegajo').value = '';
             datosFiltrados = JSON.parse(JSON.stringify(datosCompletos));
-            
+
             actualizarStats();
             actualizarGraficos();
             cargarMarcadores();
-            // Refrescar tabla de vencimientos con el filtro activo
             if (filtroVencActivo !== null) renderizarTablaVencimientos(filtroVencActivo);
+        }
+
+        function cambiarPageSize() {
+            pageSize = parseInt(document.getElementById('page-size-select').value);
+            paginaActual = 1;
+            renderizarPagina();
+        }
+
+        function exportarCSV() {
+            if (!listaActual || listaActual.length === 0) {
+                alert('No hay datos para exportar. Seleccioná un filtro de vencimientos primero.');
+                return;
+            }
+            // Aplicar búsqueda activa
+            const lista = busquedaTablaActiva
+                ? listaActual.filter(u =>
+                    (u.nombre||'').toLowerCase().includes(busquedaTablaActiva) ||
+                    (u.actividad||'').toLowerCase().includes(busquedaTablaActiva) ||
+                    (u.categoria_dist||'').toLowerCase().includes(busquedaTablaActiva) ||
+                    (u.barrio||'').toLowerCase().includes(busquedaTablaActiva) ||
+                    (u.legajo||'').toString().includes(busquedaTablaActiva)
+                  )
+                : listaActual;
+
+            const cols = ['legajo','nombre','razon_social','categoria_dist','actividad','direccion','barrio','estado','vencimiento','dias_restantes'];
+            const headers = ['Legajo','Nombre','Razón Social','Categoría','Actividad','Dirección','Barrio','Estado','Vencimiento','Días Restantes'];
+
+            const escape = v => {
+                if (v === null || v === undefined) return '';
+                const s = String(v).replace(/"/g, '""');
+                return s.includes(',') || s.includes('"') || s.includes('\n') ? `"${s}"` : s;
+            };
+
+            const rows = [headers.join(',')];
+            lista.forEach(item => {
+                rows.push(cols.map(c => escape(item[c])).join(','));
+            });
+
+            const blob = new Blob([rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href     = url;
+            const fecha = new Date().toISOString().slice(0,10);
+            a.download = `habilitaciones_${filtroVencActivo}_${fecha}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         function calcularDias(fechaStr) {

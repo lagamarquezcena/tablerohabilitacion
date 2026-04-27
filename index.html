@@ -529,6 +529,7 @@
         }
 
         /* Upload section */
+        /* Upload section — estado inicial (expandido) */
         .upload-section {
             background: white;
             padding: 2rem;
@@ -536,6 +537,81 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.08);
             margin-bottom: 2rem;
             text-align: center;
+            transition: padding 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        /* Upload section — estado colapsado (datos cargados) */
+        .upload-section.loaded {
+            padding: 0.6rem 1.25rem;
+            box-shadow: none;
+            border: 1px solid var(--border-light);
+            background: var(--va-gray);
+        }
+
+        .upload-section.loaded .upload-expanded {
+            display: none;
+        }
+
+        .upload-section .upload-collapsed {
+            display: none;
+            align-items: center;
+            gap: 0.75rem;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .upload-section.loaded .upload-collapsed {
+            display: flex;
+        }
+
+        .upload-file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .upload-file-info .file-icon {
+            font-size: 1rem;
+        }
+
+        .upload-file-name {
+            font-weight: 700;
+            color: var(--text-primary);
+            max-width: 260px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .upload-change-btn {
+            background: none;
+            border: 1px solid var(--va-red);
+            color: var(--va-red);
+            padding: 0.3rem 0.85rem;
+            border-radius: 20px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .upload-change-btn:hover {
+            background: var(--va-red);
+            color: white;
+        }
+
+        .upload-record-count {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            background: white;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 0.2rem 0.65rem;
+            font-weight: 600;
         }
 
         .upload-btn {
@@ -765,13 +841,29 @@
 
     <div class="container">
         <!-- Upload Section -->
-        <div class="upload-section">
-            <h2 style="margin-bottom: 1rem; color: var(--va-red);">Cargar Datos</h2>
+        <div class="upload-section" id="uploadSection">
+            <!-- Estado expandido: visible antes de cargar -->
+            <div class="upload-expanded">
+                <h2 style="margin-bottom: 1rem; color: var(--va-red);">Cargar Datos</h2>
+                <label for="fileInput" class="upload-btn">📂 Seleccionar archivo JSON</label>
+                <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
+                    Seleccioná el archivo <strong>base_habilitaciones_tablero.json</strong> para visualizar el tablero
+                </p>
+            </div>
+            <!-- Estado colapsado: visible después de cargar -->
+            <div class="upload-collapsed">
+                <div class="upload-file-info">
+                    <span class="file-icon">✅</span>
+                    <span>Datos cargados:</span>
+                    <span class="upload-file-name" id="fileNameCollapsed">—</span>
+                    <span class="upload-record-count" id="uploadRecordCount">0 registros</span>
+                </div>
+                <button class="upload-change-btn" onclick="document.getElementById('fileInput').click()">
+                    ↺ Cambiar archivo
+                </button>
+            </div>
+            <!-- Input oculto siempre presente -->
             <input type="file" id="fileInput" accept=".json" style="display: none;">
-            <label for="fileInput" class="upload-btn">Seleccionar archivo JSON</label>
-            <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
-                Archivo cargado: <span id="fileName">Ninguno</span>
-            </p>
         </div>
 
         <!-- Filters Section -->
@@ -1000,7 +1092,7 @@
             const file = e.target.files[0];
             if (!file) return;
 
-            document.getElementById('fileName').textContent = file.name;
+            // fileName handled in collapse block below
 
             const reader = new FileReader();
             reader.onload = function(event) {
@@ -1015,6 +1107,14 @@
                     actualizarGraficos();
                     inicializarMapa();
                     actualizarTablaVencimientos();
+
+                    // Colapsar sección de carga
+                    const sec = document.getElementById('uploadSection');
+                    if (sec) sec.classList.add('loaded');
+                    const fnc = document.getElementById('fileNameCollapsed');
+                    if (fnc) fnc.textContent = file.name;
+                    const rc = document.getElementById('uploadRecordCount');
+                    if (rc) rc.textContent = datosCompletos.ubicaciones.length.toLocaleString() + ' registros';
                 } catch (error) {
                     alert('Error al leer el archivo JSON: ' + error.message);
                 }
